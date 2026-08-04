@@ -1,64 +1,73 @@
 <?php
 
-
-
 namespace App\Http\Controllers;
 
 use App\Models\Article;
-use App\Models\Tag;
+use App\Models\Category;
 use Illuminate\Http\Request;
 
 class ArticleController extends Controller
 {
- public function index()
-{
-    $articles = Article::with('tags')->get(); 
-    return view('articles.index', compact('articles'));
-}
+    public function index()
+    {
+        $articles = Article::with('category')->get();
+
+        return view('articles.index', compact('articles'));
+    }
 
     public function create()
     {
-        $tags = Tag::all();
-        return view('articles.create', compact('tags'));
+        $categories = Category::all();
+
+        return view('articles.create', compact('categories'));
     }
 
     public function store(Request $request)
     {
-        $article = Article::create($request->only('title','content'));
-        $article->tags()->sync($request->tags);
-        return redirect()->route('articles.index');
-    }
+        $request->validate([
+            'title' => 'required',
+            'content' => 'required',
+            'category_id' => 'required|exists:categories,id',
+        ]);
 
-    public function show(Article $article)
-    {
-        return view('articles.show', compact('article'));
+        Article::create([
+            'title' => $request->title,
+            'content' => $request->content,
+            'user_id' => auth()->id(),
+            'category_id' => $request->category_id,
+        ]);
+
+        return redirect()->route('articles.index');
     }
 
     public function edit(Article $article)
     {
-        $tags = Tag::all();
-        return view('articles.edit', compact('article','tags'));
+        $categories = Category::all();
+
+        return view('articles.edit', compact('article', 'categories'));
     }
 
     public function update(Request $request, Article $article)
     {
-        $article->update($request->only('title','content'));
-        $article->tags()->sync($request->tags);
-        return redirect()->route('articles.show', $article);
+        $request->validate([
+            'title' => 'required',
+            'content' => 'required',
+            'category_id' => 'required|exists:categories,id',
+        ]);
+
+        $article->update([
+            'title' => $request->title,
+            'content' => $request->content,
+            'category_id' => $request->category_id,
+        ]);
+
+        return redirect()->route('articles.index');
     }
 
     public function destroy(Article $article)
-{
-    
-    $article->tags()->detach();
+    {
+        $article->delete();
 
-    
-    $article->delete();
-
-    return redirect()
-        ->route('articles.index')
-        ->with('success', 'Articolo eliminato con successo');
+        return redirect()->route('articles.index');
+    }
 }
-
-}
-

@@ -19,12 +19,12 @@
         </div>
 
         <div class="mb-3">
-            <label class="form-label">Tag</label>
-            <select name="tags[]" class="form-select" multiple>
-                @foreach($tags as $tag)
-                    <option value="{{ $tag->id }}"
-                        @selected($article->tags->contains($tag->id))>
-                        {{ $tag->name }}
+            <label class="form-label">Categoria</label>
+            <select name="category_id" class="form-select">
+                @foreach($categories as $category)
+                    <option value="{{ $category->id }}"
+                        @selected($article->category_id == $category->id)>
+                        {{ $category->name }}
                     </option>
                 @endforeach
             </select>

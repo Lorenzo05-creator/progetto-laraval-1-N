@@ -15,13 +15,14 @@
         </div>
 
         <div class="mb-3">
-            <label class="form-label">Tag</label>
-            <select name="tags[]" class="form-select" multiple>
-                @foreach($tags as $tag)
-                    <option value="{{ $tag->id }}">{{ $tag->name }}</option>
+            <label class="form-label">Categoria</label>
+            <select name="category_id" class="form-select">
+                @foreach($categories as $category)
+                    <option value="{{ $category->id }}">
+                        {{ $category->name }}
+                    </option>
                 @endforeach
             </select>
-            <small class="text-muted">CTRL per selezione multipla</small>
         </div>
 
         <button class="btn btn-success">Salva</button>
