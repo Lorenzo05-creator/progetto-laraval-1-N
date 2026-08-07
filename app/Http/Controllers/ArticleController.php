@@ -10,64 +10,86 @@ class ArticleController extends Controller
 {
     public function index()
     {
-        $articles = Article::with('category')->get();
+        $articles = Article::with(['user', 'category'])
+            ->latest()
+            ->get();
 
         return view('articles.index', compact('articles'));
     }
 
+    public function show(Article $article)
+    {
+        return view('articles.show', compact('article'));
+    }
+
     public function create()
     {
-        $categories = Category::all();
+        $categories = Category::orderBy('name')->get();
 
         return view('articles.create', compact('categories'));
     }
 
     public function store(Request $request)
     {
-        $request->validate([
-            'title' => 'required',
-            'content' => 'required',
-            'category_id' => 'required|exists:categories,id',
+        $validated = $request->validate([
+            'title' => ['required','min:3','max:255'],
+            'content' => ['required','min:10'],
+            'category_id' => ['required','exists:categories,id'],
         ]);
 
-        Article::create([
-            'title' => $request->title,
-            'content' => $request->content,
-            'user_id' => auth()->id(),
-            'category_id' => $request->category_id,
-        ]);
+        $validated['user_id'] = auth()->id();
 
-        return redirect()->route('articles.index');
+        Article::create($validated);
+
+        return redirect()
+            ->route('articles.index')
+            ->with('success', 'Articolo pubblicato con successo!');
     }
 
     public function edit(Article $article)
     {
-        $categories = Category::all();
+        abort_if(auth()->id() !== $article->user_id, 403);
+
+        $categories = Category::orderBy('name')->get();
 
         return view('articles.edit', compact('article', 'categories'));
     }
 
     public function update(Request $request, Article $article)
     {
-        $request->validate([
-            'title' => 'required',
-            'content' => 'required',
-            'category_id' => 'required|exists:categories,id',
+        abort_if(auth()->id() !== $article->user_id, 403);
+
+        $validated = $request->validate([
+            'title' => ['required','min:3','max:255'],
+            'content' => ['required','min:10'],
+            'category_id' => ['required','exists:categories,id'],
         ]);
 
-        $article->update([
-            'title' => $request->title,
-            'content' => $request->content,
-            'category_id' => $request->category_id,
-        ]);
+        $article->update($validated);
 
-        return redirect()->route('articles.index');
+        return redirect()
+            ->route('articles.show', $article)
+            ->with('success', 'Articolo aggiornato!');
     }
 
     public function destroy(Article $article)
     {
+        abort_if(auth()->id() !== $article->user_id, 403);
+
         $article->delete();
 
-        return redirect()->route('articles.index');
+        return redirect()
+            ->route('articles.index')
+            ->with('success', 'Articolo eliminato.');
     }
+
+    public function byCategory(Category $category)
+{
+    $articles = Article::with(['user', 'category'])
+        ->where('category_id', $category->id)
+        ->latest()
+        ->get();
+
+    return view('articles.index', compact('articles', 'category'));
+}
 }
