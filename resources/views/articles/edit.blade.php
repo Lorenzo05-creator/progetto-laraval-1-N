@@ -10,7 +10,7 @@
 
 <h1 class="fw-bold mb-4">
 
-✏️ Modifica Articolo
+ Modifica Articolo
 
 </h1>
 
@@ -96,7 +96,7 @@ Annulla
 <button
 class="btn btn-success">
 
-💾 Salva Modifiche
+ Salva Modifiche
 
 </button>
 

@@ -24,13 +24,13 @@
 
 <span>
 
-👤 {{ $article->user->name }}
+ {{ $article->user->name }}
 
 </span>
 
 <span>
 
-📅 {{ $article->created_at->format('d/m/Y H:i') }}
+ {{ $article->created_at->format('d/m/Y H:i') }}
 
 </span>
 
@@ -66,7 +66,7 @@ class="btn btn-outline-light">
 href="{{ route('articles.edit',$article) }}"
 class="btn btn-warning">
 
-✏️ Modifica
+ Modifica
 
 </a>
 

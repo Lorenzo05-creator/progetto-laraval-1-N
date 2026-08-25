@@ -10,15 +10,11 @@
 
 <h1 class="fw-bold mb-2">
 
-✍️ Nuovo Articolo
+ Nuovo Articolo
 
 </h1>
 
-<p class="text-secondary mb-5">
 
-Condividi le tue idee con il mondo.
-
-</p>
 
 <form action="{{ route('articles.store') }}"
 method="POST">
@@ -108,7 +104,7 @@ class="btn btn-outline-light px-4">
 <button
 class="btn btn-success px-5">
 
-🚀 Pubblica
+ Pubblica
 
 </button>
 
